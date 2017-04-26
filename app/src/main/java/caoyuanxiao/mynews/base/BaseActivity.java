@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +47,7 @@ import rx.functions.Action1;
 public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity implements BaseView {
 
     //代理的基类
-    T mPresenter;
+    protected T mPresenter;
 
     /**
      * 标示该activity是否可滑动退出,默认false
@@ -108,6 +109,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      */
     private Observable<Boolean> mFinishObservable;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +158,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     }
 
     protected abstract void initView();
+
     private void initToolbar() {
 
         // 针对父布局非DrawerLayout的状态栏处理方式
@@ -409,6 +412,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void toast(String msg) {
         showSnackbar(msg);
@@ -423,6 +427,50 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     public void hideProgress() {
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mFinishObservable != null) {
+            RxBus.get().unregister("finish", mFinishObservable);
+        }
+        if (mPresenter != null) {
+            mPresenter.onDestroy();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPresenter != null) {
+            mPresenter.onResume();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                // 返回键时未关闭侧栏时关闭侧栏
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (!(this instanceof NewsActivity) && mHasNavigationView) {
+                try {
+                    showActivityReorderToFront(this, AppManager.getAppManager().getLastNavActivity(), true);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+
+                }
+                return true;
+            } else if (this instanceof NewsActivity) {
+                // NewsActivity发送通知结束所有导航的Activity
+                RxBus.get().post("finish", false);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     protected void showSnackbar(String msg) {
         Snackbar.make(getWindow().getDecorView(), msg, Snackbar.LENGTH_SHORT).show();
