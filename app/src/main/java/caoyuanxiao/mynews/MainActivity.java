@@ -8,7 +8,6 @@ import java.util.List;
 
 import caoyuanxiao.mynews.annotation.ActivityFragmentInject;
 import caoyuanxiao.mynews.base.BaseActivity;
-import caoyuanxiao.mynews.bean.User;
 import caoyuanxiao.mynews.utils.RxBus;
 
 import static caoyuanxiao.mynews.R.id.tv_back;
