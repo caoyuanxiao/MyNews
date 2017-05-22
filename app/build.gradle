@@ -23,6 +23,13 @@ android {
             java.srcDirs = ['src/main/java', 'src/main/java-gen']
         }
     }
+
+    // 解决butterknife和lombok的冲突：Duplicate files copied in APK META-INF/services/javax.annotation.processing.Processor
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {

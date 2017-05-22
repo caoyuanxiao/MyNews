@@ -24,17 +24,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        findViewById(tv_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                User user = new User("yuanxiao", "520");
-                List<User> users = new ArrayList<User>();
-                users.add(user);
-                users.add(user);
-                RxBus.get().post("back", users);
-                finish();
-            }
-        });
+
     }
 
 

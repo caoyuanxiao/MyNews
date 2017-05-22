@@ -15,7 +15,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.oushangfeng.ounews.R;
+import caoyuanxiao.mynews.R;
 
 
 /**
@@ -81,7 +81,7 @@ public class PacManRefreshHead extends RefreshHead {
         if (attrs != null) {
 
             final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PacManRefreshHead);
-            mPaint.setColor(typedArray.getColor(R.styleable.PacManRefreshHead_pacIconColor, ContextCompat.getColor(context, R.color.material_black55)));
+            mPaint.setColor(typedArray.getColor(R.styleable.PacManRefreshHead_pacIconColor, ContextCompat.getColor(context, R.color.material_black)));
             typedArray.recycle();
         }
 
